@@ -1,25 +1,13 @@
 import { Router, Request, Response } from "express";
+import { login, register } from "../controller/authController";
 
 const router = Router();
 
-// POST /auth/login
-router.post("/login", async (req: Request, res: Response) => {
-  const { email, password } = req.body;
-  // Placeholder logic
-  if (!email || !password) {
-    return res.status(400).json({ error: "email and password required" });
-  }
+router.post("/register", register);
+router.post("/login", login);
+// router.post("/refresh", refreshToken);
+// router.post("/logout", logout);
 
-  res.json({ message: "Logged in (placeholder)", email });
-});
-
-// POST /auth/register
-router.post("/register", async (req: Request, res: Response) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(400).json({ error: "email and password required" });
-  }
-  res.status(201).json({ message: "Registered (placeholder)", email });
-});
-
+// // example protected route
+// router.get("/me", requireAuth, me);
 export default router;
