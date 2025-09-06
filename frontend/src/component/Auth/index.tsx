@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { FiLock, FiMail, FiEye, FiEyeOff } from "react-icons/fi";
 import { FaGoogle, FaGithub } from "react-icons/fa";
+import { loginUser, registerUser } from "../../service/api";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
+  const [mode, setMode] = useState<"login" | "register">("login");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -10,15 +13,29 @@ export default function Login() {
     password: "",
     rememberMe: false,
   });
+  const navigate = useNavigate();
 
   const handleSubmit = async () => {
     setIsLoading(true);
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setIsLoading(false);
-
-    console.log("Login attempt:", formData);
+    try {
+      let resp;
+      if (mode === "login") {
+        // Call login API
+        resp = await loginUser(formData.email, formData.password);
+      } else {
+        // Call register API
+        resp = await registerUser(formData.email, formData.password);
+      }
+      // Save token (adjust according to backend response shape)
+      console.log(resp, "dfghj");
+      localStorage.setItem("token", resp.tokens.access);
+      navigate("/jobs");
+    } catch (error: any) {
+      console.error(`${mode} failed`, error.response?.data || error.message);
+      alert(error.response?.data?.message || `${mode} failed`);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSocialLogin = (provider: string) => {
@@ -189,10 +206,12 @@ export default function Login() {
                 {isLoading ? (
                   <div className="flex items-center justify-center">
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                    Signing in...
+                    {mode === "login" ? "Signing in..." : "Signing up..."}
                   </div>
-                ) : (
+                ) : mode === "login" ? (
                   "Sign in"
+                ) : (
+                  "Sign up"
                 )}
               </button>
             </div>
@@ -200,9 +219,17 @@ export default function Login() {
             {/* Sign Up Link */}
             <div className="mt-6 text-center">
               <p className="text-slate-400">
-                Don't have an account?{" "}
-                <button className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
-                  Sign up
+                {mode === "login"
+                  ? "Don't have an account?"
+                  : "Already have an account?"}
+                <button
+                  type="button"
+                  onClick={() =>
+                    setMode(mode === "login" ? "register" : "login")
+                  }
+                  className="text-blue-400 hover:text-blue-300 font-medium transition-colors"
+                >
+                  {mode == "login" ? "Sign in" : "Sign up"}
                 </button>
               </p>
             </div>
