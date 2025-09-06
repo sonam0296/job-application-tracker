@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router } from "express";
 import { login, register } from "../controller/authController";
 
 const router = Router();
@@ -10,4 +10,6 @@ router.post("/login", login);
 
 // // example protected route
 // router.get("/me", requireAuth, me);
+// router.get("/profile", userProfile);
+
 export default router;

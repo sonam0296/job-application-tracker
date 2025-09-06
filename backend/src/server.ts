@@ -4,8 +4,9 @@ import cors from "cors";
 import router from "./route/index";
 import sequelize from "./lib/sequelize";
 import "./model/UserModel";
+import "./model/JobModel";
 
-const PORT = 8000;
+const PORT = 9000;
 const app = express();
 app.use(cors());
 app.use(express.json());
